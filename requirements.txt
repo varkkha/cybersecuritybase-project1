@@ -43,7 +43,6 @@ Django==5.2.1
 dnspython==2.1.0
 dropbox==11.26.0
 dulwich==0.20.31
-duplicity==0.8.21
 ecdsa==0.18.0b1
 entrypoints==0.4
 et-xmlfile==1.0.1
