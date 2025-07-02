@@ -22,6 +22,7 @@ pip install -r requirements.txt
 4. Create a .env file in the root folder with the following content:
 ```bash
 SECRET_KEY=your_secret_key_here
+DEBUG=True
 ```
 
 5. Run migrations. Make sure you're in the src folder.
