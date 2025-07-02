@@ -1,0 +1,21 @@
+<h1>Blog Posts</h1>
+
+<ul>
+  {% for post in posts %}
+    <li><strong>{{ post.title }}</strong>: {{ post.content }}</li>
+  {% empty %}
+    <li>No posts yet.</li>
+  {% endfor %}
+</ul>
+
+<h2>Add a new post</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add Post</button>
+</form>
+
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Logout</button>
+</form>
