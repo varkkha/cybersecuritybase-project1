@@ -19,13 +19,18 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Run migrations. Make sure you're in the src-folder.
+4. Create a .env file in the root folder with the following content:
 ```bash
-cd app
+SECRET_KEY=your_secret_key_here
+```
+
+5. Run migrations. Make sure you're in the src folder.
+```bash
+cd src
 python manage.py migrate
 ```
-5. Start the development server
+6. Start the development server
 ```bash
 python manage.py runserver
 ```
-Visit http://localhost:8000 in your browser.
+7. Visit http://localhost:8000 in your browser
