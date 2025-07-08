@@ -40,12 +40,12 @@ python manage.py runserver
 
 ## Security flaws
 
-This software has been constructed for the course _Cyber Security Base: Course Project I_. It has five security flaws that are pointed out below. In addition, there are provided the steps to fix them.
+This software has been constructed for the course _Cyber Security Base: Course Project I_. The software has five security flaws that are pointed out below. In addition, there are provided the steps to fix them.
 
 ### Flaw 1: A01:2021-Broken Access Control
 
 **Source link:**
-https://vscode.dev/github/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L24
+See the code on [line 24 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L24)
 
 **Description of flaw:**
 In this flaw, users can act outside of their intented permissions because the system does not properly verify the ownership. The inadequate verification can lead to unauthorized access, data breaches, and potential manipulation or destruction of other users’ sensitive information.
