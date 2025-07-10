@@ -146,3 +146,40 @@ The before and after screenshots look visually identical because both show the s
 However, in the fixed version, if you try to access the API with an incorrect or missing API key, the data will be hidden or an error shown:
 
 ![Flaw3After2](screenshots/flaw-3-after-2.png)
+
+### Flaw 4: A05:2021-Security Misconfiguration
+
+**Source link:**
+See the code on [line 27 of settings.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/app/settings.py#L27)
+
+**Description of flaw:**
+
+One security misconfiguration can be leaving to Django application's production settings DEBUG = True. This can expose sensitive internal information, and make application vulnerable to attacks.
+
+In this application the flaw can be found on settings.py file line 27:
+```bash
+DEBUG = True
+```
+
+Now if one opens a non-existent page like URL http://localhost:8000/blog/error-test/, one can see Django's error page and there for example the stack trace, file paths and possible variable values.
+
+![Flaw4Before](screenshots/flaw-4-before.png)
+
+**How to fix it:**
+
+This vulnerability can be mitigated by moving the debug flag to an environment variable and setting allowed hosts explicitly.
+
+These rows should be added to settings.py:
+```bash
+DEBUG = config('DEBUG', cast=bool)
+ALLOWED_HOSTS = ['localhost', '127.0.0.1',]
+```
+
+And to .env file should be added
+```bash
+DEBUG=False
+```
+
+After this fix, Django no longer exposes internal error details when a page is missing or broken—only a generic "Not Found" page will appear:
+
+![Flaw4After](screenshots/flaw-4-after.png)
