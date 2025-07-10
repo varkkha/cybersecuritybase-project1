@@ -47,7 +47,7 @@ This software has been constructed for the course _Cyber Security Base: Course P
 ### Flaw 1: A01:2021-Broken Access Control
 
 **Source link:**
-See the code on [line 25 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L25)
+See the code on [line 27 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L27)
 
 **Description of flaw:**
 In these kind of flaws, users can act outside of their intented permissions because the system does not properly verify the ownership. The inadequate verification can lead to unauthorized access, data breaches, and potential manipulation or destruction of other users’ sensitive information.
@@ -66,7 +66,7 @@ In the snapshot below, signed in is user with user_id = 3. But if one opens url 
 
 **How to fix it:**
 
-This flaw can be fixed by adding a check to ensure that the profile belongs to the logged-in user. This fix can be found in the code commented out starting from line 30.
+This flaw can be fixed by adding a check to ensure that the profile belongs to the logged-in user. This fix can be found in the code commented out starting from line 32.
 
 ```bash
 @login_required
@@ -83,7 +83,7 @@ Now one cannot see the profile page of another user.
 ### Flaw 2: A03:2021-Injection
 
 **Source link:**
-See the code on [line 38 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L38)
+See the code on [line 40 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L40)
 
 **Description of flaw:**
 
@@ -97,9 +97,52 @@ In the snapshot below, when visiting url "http://localhost:8000/blog/unsafe-sear
 
 **How to fix it:**
 
-This flaw can be fixed by replacing the vulnerable query with a parameterized one. This ensures that user input is handled safely. This fix can be found in the code commented out starting from line 46.
+This flaw can be fixed by replacing the vulnerable query with a parameterized one. This ensures that user input is handled safely. This fix can be found in the code commented out starting from line 47.
 
 Now, when trying to open URL "http://localhost:8000/blog/unsafe-search/?name=' OR '1'='1" the results page is empty, because "OR '1'='1" is not anymore SQL injection, but just a string. So the database looks for a username literally matching ' OR '1'='1, which doesn't exist, resulting in an empty results page. This prevents the classic SQL injection attack from succeeding.
 
 ![Flaw2After](screenshots/flaw-2-after.png)
 
+### Flaw 3: A04:2021 – Insecure Design
+
+**Source link:**
+See the code on [line 56 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L56)
+
+**Description of flaw:**
+
+Insecure design can include a large variety of different kinds of weaknesses. This software has a vulnerability with API key as the API view uses a hardcoded API key. This is insecure since the key is directly embedded in the source code, and that way it can leak through version control or code sharing. The flaw can be found on views.py line 58.
+
+When opening URL http://localhost:8000/blog/secret-api/?apikey=my-secret-api-key, one can see the secret data, see the screenshot below.
+
+![Flaw3Before](screenshots/flaw-3-before.png)
+
+**How to fix it:**
+
+This flaw can be fixed by storing the API key to .env file and loading it securely at runtime. Now, only requests with the correct API key stored in the environment file will see the secret data.
+
+Thus, when fixin the flaw, one should add enviroment file .env and add the API key there:
+```bash
+API_KEY=my-secret-api-key
+```
+After that, the view.py should be changed to a version where the API key is loaded from .env file:
+```bash
+API_KEY = config('API_KEY')
+
+def secret_api(request):
+    key = request.GET.get('apikey')
+
+    if key == API_KEY:
+        return JsonResponse({'data': 'Secrets!'})
+    else:
+        return JsonResponse({'error': 'Incorrect API key'}, status=403)
+```
+
+The fixed code can be found as commented out starting from views.py line 64.
+
+The before and after screenshots look visually identical because both show the secret data page:
+
+![Flaw3After1](screenshots/flaw-3-after-1.png)
+
+However, in the fixed version, if you try to access the API with an incorrect or missing API key, the data will be hidden or an error shown:
+
+![Flaw3After2](screenshots/flaw-3-after-2.png)

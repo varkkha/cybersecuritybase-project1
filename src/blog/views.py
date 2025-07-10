@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.db import connection
+from decouple import config
 from .models import Post
 from .forms import PostForm
 
@@ -50,3 +52,22 @@ def unsafe_search(request):
         #cursor.execute("SELECT * FROM auth_user WHERE username = %s", [name])
         #results = cursor.fetchall()
     #return render(request, 'blog/results.html', {'results': results})
+
+#Flaw 3: A04:2021 – Insecure Design
+def secret_api(request):
+    key = request.GET.get('apikey')
+    if key == 'my-secret-api-key':
+        return JsonResponse({'data': 'Secrets!'})
+    else:
+        return JsonResponse({'error': 'Incorrect API key'}, status=403)
+
+#Fix for Flaw 3: A04:2021 – Insecure Design
+#API_KEY = config('API_KEY')
+
+#def secret_api(request):
+    #key = request.GET.get('apikey')
+
+    #if key == API_KEY:
+        #return JsonResponse({'data': 'Secrets!'})
+    #else:
+        #return JsonResponse({'error': 'Incorrect API key'}, status=403)
