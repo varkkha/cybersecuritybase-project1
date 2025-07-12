@@ -218,6 +218,6 @@ After removing the @csrf_exempt decorator from the view, we get an error because
 ![Flaw5After](screenshots/flaw-5-after.png)
 
 **References:**
-https://owasp.org/www-project-top-ten/
-https://owasp.org/www-community/attacks/csrf
+- https://owasp.org/www-project-top-ten/
+- https://owasp.org/www-community/attacks/csrf
 
