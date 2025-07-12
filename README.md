@@ -32,11 +32,11 @@ DEBUG=True
 5. Run migrations. Make sure you're in the src folder.
 ```bash
 cd src
-python manage.py migrate
+python3 manage.py migrate
 ```
 6. Start the development server
 ```bash
-python manage.py runserver
+python3 manage.py runserver
 ```
 7. Visit http://localhost:8000 in your browser
 
@@ -47,7 +47,7 @@ This software has been constructed for the course _Cyber Security Base: Course P
 ### Flaw 1: A01:2021-Broken Access Control
 
 **Source link:**
-See the code on [line 27 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L27)
+See the code on [line 28 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L28)
 
 **Description of flaw:**
 In these kind of flaws, users can act outside of their intented permissions because the system does not properly verify the ownership. The inadequate verification can lead to unauthorized access, data breaches, and potential manipulation or destruction of other users’ sensitive information.
@@ -66,7 +66,7 @@ In the snapshot below, signed in is user with user_id = 3. But if one opens url 
 
 **How to fix it:**
 
-This flaw can be fixed by adding a check to ensure that the profile belongs to the logged-in user. This fix can be found in the code commented out starting from line 32.
+This flaw can be fixed by adding a check to ensure that the profile belongs to the logged-in user. This fix can be found in the code commented out starting from line 33.
 
 ```bash
 @login_required
@@ -83,7 +83,7 @@ Now one cannot see the profile page of another user.
 ### Flaw 2: A03:2021-Injection
 
 **Source link:**
-See the code on [line 40 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L40)
+See the code on [line 41 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L41)
 
 **Description of flaw:**
 
@@ -97,7 +97,7 @@ In the snapshot below, when visiting url "http://localhost:8000/blog/unsafe-sear
 
 **How to fix it:**
 
-This flaw can be fixed by replacing the vulnerable query with a parameterized one. This ensures that user input is handled safely. This fix can be found in the code commented out starting from line 47.
+This flaw can be fixed by replacing the vulnerable query with a parameterized one. This ensures that user input is handled safely. This fix can be found in the code commented out starting from line 49.
 
 Now, when trying to open URL "http://localhost:8000/blog/unsafe-search/?name=' OR '1'='1" the results page is empty, because "OR '1'='1" is not anymore SQL injection, but just a string. So the database looks for a username literally matching ' OR '1'='1, which doesn't exist, resulting in an empty results page. This prevents the classic SQL injection attack from succeeding.
 
@@ -106,11 +106,11 @@ Now, when trying to open URL "http://localhost:8000/blog/unsafe-search/?name=' O
 ### Flaw 3: A04:2021 – Insecure Design
 
 **Source link:**
-See the code on [line 56 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L56)
+See the code on [line 57 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L57)
 
 **Description of flaw:**
 
-Insecure design can include a large variety of different kinds of weaknesses. This software has a vulnerability with API key as the API view uses a hardcoded API key. This is insecure since the key is directly embedded in the source code, and that way it can leak through version control or code sharing. The flaw can be found on views.py line 58.
+Insecure design can include a large variety of different kinds of weaknesses. This software has a vulnerability with API key as the API view uses a hardcoded API key. This is insecure since the key is directly embedded in the source code, and that way it can leak through version control or code sharing. The flaw can be found on views.py line 60.
 
 When opening URL http://localhost:8000/blog/secret-api/?apikey=my-secret-api-key, one can see the secret data, see the screenshot below.
 
@@ -137,7 +137,7 @@ def secret_api(request):
         return JsonResponse({'error': 'Incorrect API key'}, status=403)
 ```
 
-The fixed code can be found as commented out starting from views.py line 64.
+The fixed code can be found as commented out starting from views.py line 65.
 
 The before and after screenshots look visually identical because both show the secret data page:
 
@@ -183,3 +183,41 @@ DEBUG=False
 After this fix, Django no longer exposes internal error details when a page is missing or broken—only a generic "Not Found" page will appear:
 
 ![Flaw4After](screenshots/flaw-4-after.png)
+
+### Flaw 5: Cross-Site Request Forgery (CSRF)
+
+**Source link:**
+See the code on [line 12 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L12)
+
+**Description of flaw:**
+
+This vulnerability is an example of Cross-Site Reguest Forgery (CSRF). With this vulnerability, the attacker can trick a logged-in user's browser to perform unwanted actions on their behalf. This can lead to situations where for example user is forced to perform unauthorized fund transfers, email address changes and other sensitive operations.
+
+In this software, the flaw is on line 12:
+```bash
+@csrf_exempt
+```
+
+This decorator disables the Django's built-in CSRF mechanism. As a result, an attacker could trick a logged-in user into submitting a POST request from a malicious website — without the user's knowledge or consent.
+
+For example, we have an attacker.html file saved on somewhere outside this software project. If we run on that folder the following code:
+```bash
+python3 -m http.server 8081
+```
+
+And then open url http://localhost:8081/attacker.html, a blog post, that we have not added ourselves, appears to blog posts:
+
+![Flaw5Before](screenshots/flaw-5-before.png)
+
+**How to fix it:**
+
+This flaw can be fixed by removing the @csrf_exempt decorator from the view. When the decorator is removed, Django will enforce CSRF protection and require a valid token for each POST request.
+
+After removing the @csrf_exempt decorator from the view, we get an error because CSRF protection works:
+
+![Flaw5After](screenshots/flaw-5-after.png)
+
+**References:**
+https://owasp.org/www-project-top-ten/
+https://owasp.org/www-community/attacks/csrf
+

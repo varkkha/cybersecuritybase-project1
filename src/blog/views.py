@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse, JsonResponse
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 from decouple import config
 from .models import Post
 from .forms import PostForm
-
+#Flaw 5: Cross-Site Request Forgery (CSRF)
+@csrf_exempt
 @login_required
 def index(request):
     posts = Post.objects.all()
@@ -61,7 +62,7 @@ def secret_api(request):
     else:
         return JsonResponse({'error': 'Incorrect API key'}, status=403)
 
-#Fix for Flaw 3: A04:2021 – Insecure Design
+#Fix for Flaw 3: A04:2021-Insecure Design
 #API_KEY = config('API_KEY')
 
 #def secret_api(request):
@@ -71,3 +72,5 @@ def secret_api(request):
         #return JsonResponse({'data': 'Secrets!'})
     #else:
         #return JsonResponse({'error': 'Incorrect API key'}, status=403)
+
+
