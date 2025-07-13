@@ -162,7 +162,7 @@ See the code on [line 27 of settings.py](https://github.com/varkkha/cybersecurit
 One security misconfiguration can be leaving to Django application's production settings DEBUG = True. This can expose sensitive internal information, and make application vulnerable to attacks.
 
 In this application the flaw can be found on settings.py file line 27:
-```bashhttps://owasp.org/Top10/A04_2021-Insecure_Design/
+```bash
 DEBUG = True
 ```
 
@@ -174,7 +174,7 @@ Now if one opens a non-existent page like URL http://localhost:8000/blog/error-t
 
 This vulnerability can be mitigated by moving the debug flag to an environment variable and setting allowed hosts explicitly. The fix can be found starting from [line 30 of settings.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/app/settings.py#L30)
 
-Tus, these rows should be added to settings.py:
+Thus, these rows should be added to settings.py:
 ```bash
 DEBUG = config('DEBUG', cast=bool)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1',]
