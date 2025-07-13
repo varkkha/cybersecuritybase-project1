@@ -110,7 +110,7 @@ Now, when trying to open URL "http://localhost:8000/blog/unsafe-search/?name=' O
 
 ![Flaw2After](screenshots/flaw-2-after.png)
 
-### Flaw 3: A04:2021 – Insecure Design
+### Flaw 3: A04:2021-Insecure Design
 
 **Source link:**
 See the code on [line 57 of views.py](https://github.com/varkkha/cybersecuritybase-project1/blob/main/src/blog/views.py#L57)
